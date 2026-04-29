@@ -1,0 +1,146 @@
+{
+  "id": "liver-fatty-acid-synthesis",
+  "title": "Liver Fed-State Fatty Acid Synthesis",
+  "organ": "liver",
+  "tissue": "hepatic parenchyma",
+  "cellType": "hepatocyte",
+  "compartments": [
+    { "id": "cyt", "name": "Cytosol" },
+    { "id": "mito", "name": "Mitochondrion" },
+    { "id": "matrix", "name": "Mitochondrial matrix", "parent": "mito" },
+    { "id": "imm", "name": "Inner mitochondrial membrane", "parent": "mito" }
+  ],
+  "metabolites": [
+    { "id": "glucose", "name": "Glucose", "formula": "C6H12O6", "compartment": "cyt" },
+    { "id": "pyruvate", "name": "Pyruvate", "formula": "C3H4O3", "compartment": "cyt" },
+    { "id": "acetyl_coa_m", "name": "Acetyl-CoA (matrix)", "compartment": "matrix" },
+    { "id": "oaa", "name": "Oxaloacetate", "compartment": "matrix" },
+    { "id": "citrate_m", "name": "Citrate (matrix)", "compartment": "matrix" },
+    { "id": "citrate_c", "name": "Citrate (cytosol)", "compartment": "cyt" },
+    { "id": "acetyl_coa_c", "name": "Acetyl-CoA (cytosol)", "compartment": "cyt" },
+    { "id": "malonyl_coa", "name": "Malonyl-CoA", "compartment": "cyt" },
+    { "id": "palmitate", "name": "Palmitate", "formula": "C16H32O2", "compartment": "cyt" },
+    { "id": "lcfa_coa", "name": "Long-chain fatty acyl-CoA", "compartment": "cyt" },
+    { "id": "atp", "name": "ATP", "compartment": "cyt" },
+    { "id": "amp", "name": "AMP", "compartment": "cyt" },
+    { "id": "nadh", "name": "NADH", "compartment": "matrix" },
+    { "id": "nad", "name": "NAD+", "compartment": "matrix" },
+    { "id": "co2", "name": "CO2", "compartment": "matrix" },
+    { "id": "hco3", "name": "Bicarbonate", "compartment": "cyt" }
+  ],
+  "enzymes": [
+    { "id": "gk", "name": "Glucokinase / Hexokinase", "shortName": "GK/HK", "ec": "2.7.1.2", "compartment": "cyt" },
+    { "id": "pfk1", "name": "Phosphofructokinase-1", "shortName": "PFK-1", "ec": "2.7.1.11", "compartment": "cyt" },
+    { "id": "pk", "name": "Pyruvate kinase", "shortName": "PK", "ec": "2.7.1.40", "compartment": "cyt" },
+    { "id": "pdh", "name": "Pyruvate dehydrogenase complex", "shortName": "PDH", "ec": "1.2.4.1", "compartment": "matrix" },
+    { "id": "cs", "name": "Citrate synthase", "shortName": "CS", "ec": "2.3.3.1", "compartment": "matrix" },
+    { "id": "acly", "name": "ATP citrate lyase", "shortName": "ACLY", "ec": "2.3.3.8", "compartment": "cyt" },
+    { "id": "acc", "name": "Acetyl-CoA carboxylase", "shortName": "ACC", "ec": "6.4.1.2", "compartment": "cyt" },
+    { "id": "fas", "name": "Fatty acid synthase", "shortName": "FAS", "ec": "2.3.1.85", "compartment": "cyt" },
+    { "id": "cpt1", "name": "Carnitine palmitoyltransferase I", "shortName": "CPT-I", "ec": "2.3.1.21", "compartment": "imm" }
+  ],
+  "reactions": [
+    {
+      "id": "rx_glycolysis",
+      "name": "Glycolysis (simplified)",
+      "enzyme": "pfk1",
+      "substrates": ["glucose"],
+      "products": ["pyruvate"],
+      "compartment": "cyt",
+      "notes": "Glucose -> pyruvate, simplified for visualisation"
+    },
+    {
+      "id": "rx_pdh",
+      "name": "Pyruvate -> Acetyl-CoA",
+      "enzyme": "pdh",
+      "substrates": ["pyruvate", "nad"],
+      "products": ["acetyl_coa_m", "nadh", "co2"],
+      "compartment": "matrix"
+    },
+    {
+      "id": "rx_cs",
+      "name": "Acetyl-CoA + OAA -> Citrate",
+      "enzyme": "cs",
+      "substrates": ["acetyl_coa_m", "oaa"],
+      "products": ["citrate_m"],
+      "compartment": "matrix"
+    },
+    {
+      "id": "rx_export",
+      "name": "Citrate export to cytosol",
+      "enzyme": "acly",
+      "substrates": ["citrate_m"],
+      "products": ["citrate_c"],
+      "compartment": "cyt",
+      "notes": "Tricarboxylate transporter; ACLY then cleaves cytosolic citrate"
+    },
+    {
+      "id": "rx_acly",
+      "name": "Citrate -> Cytosolic Acetyl-CoA",
+      "enzyme": "acly",
+      "substrates": ["citrate_c", "atp"],
+      "products": ["acetyl_coa_c", "oaa"],
+      "compartment": "cyt"
+    },
+    {
+      "id": "rx_acc",
+      "name": "Acetyl-CoA -> Malonyl-CoA",
+      "enzyme": "acc",
+      "substrates": ["acetyl_coa_c", "hco3", "atp"],
+      "products": ["malonyl_coa"],
+      "compartment": "cyt"
+    },
+    {
+      "id": "rx_fas",
+      "name": "Malonyl-CoA -> Palmitate",
+      "enzyme": "fas",
+      "substrates": ["malonyl_coa", "acetyl_coa_c"],
+      "products": ["palmitate"],
+      "compartment": "cyt",
+      "notes": "Iterative condensation; 7 cycles to make C16 palmitate"
+    },
+    {
+      "id": "rx_cpt1",
+      "name": "Mitochondrial fatty acid entry",
+      "enzyme": "cpt1",
+      "substrates": ["lcfa_coa"],
+      "products": ["acetyl_coa_m"],
+      "compartment": "imm",
+      "notes": "Rate-limiting step of beta-oxidation; inhibited by malonyl-CoA"
+    }
+  ],
+  "regulationRules": [
+    { "id": "r1", "trigger": "insulin high", "effect": "activate", "target": "rx_glycolysis", "mechanism": "PFK-2 -> F2,6BP activates PFK-1; dephosphorylates PDH, ACC" },
+    { "id": "r2", "trigger": "glucagon high", "effect": "inhibit", "target": "rx_acc", "mechanism": "PKA phosphorylates ACC -> inactive" },
+    { "id": "r3", "trigger": "citrate high", "effect": "activate", "target": "rx_acc", "mechanism": "Allosteric activation of ACC by citrate" },
+    { "id": "r4", "trigger": "lcfa_coa high", "effect": "inhibit", "target": "rx_acc", "mechanism": "Feedback inhibition of ACC by long-chain acyl-CoA" },
+    { "id": "r5", "trigger": "malonyl_coa high", "effect": "inhibit", "target": "rx_cpt1", "mechanism": "Malonyl-CoA allosterically inhibits CPT-I" },
+    { "id": "r6", "trigger": "amp high", "effect": "inhibit", "target": "rx_acc", "mechanism": "AMPK phosphorylates and inactivates ACC" },
+    { "id": "r7", "trigger": "atp high", "effect": "promote", "target": "rx_export", "mechanism": "ATP/ADP ratio inhibits IDH; citrate accumulates and exits" },
+    { "id": "r8", "trigger": "oxygen low", "effect": "inhibit", "target": "rx_pdh", "mechanism": "ETC limited -> NADH/NAD+ rises -> PDH inhibited" }
+  ],
+  "teachingSequence": [
+    "Liver in the fed state receives a glucose load via the portal vein.",
+    "Insulin promotes glycolysis: glucokinase, PFK-1 and pyruvate kinase are active.",
+    "Pyruvate enters the mitochondrion and PDH generates acetyl-CoA.",
+    "Acetyl-CoA condenses with OAA to make citrate via citrate synthase.",
+    "High ATP slows the TCA, so citrate accumulates and is exported to the cytosol.",
+    "ATP citrate lyase regenerates cytosolic acetyl-CoA.",
+    "Acetyl-CoA carboxylase, activated by citrate and dephosphorylated by insulin, makes malonyl-CoA.",
+    "Fatty acid synthase iteratively condenses malonyl-CoA to build palmitate.",
+    "Malonyl-CoA inhibits CPT-I, blocking fatty acid entry into mitochondria.",
+    "This locks the hepatocyte into anabolic lipid storage instead of beta-oxidation."
+  ],
+  "clinicalLinks": [
+    "MASLD / hepatic steatosis: chronic high insulin and citrate drive sustained lipogenesis.",
+    "Type 2 diabetes: hepatic insulin resistance dysregulates this lipogenesis-vs-oxidation switch.",
+    "Statins act downstream on cholesterol, but hepatic acetyl-CoA pool is shared.",
+    "CPT-I deficiency: hypoketotic hypoglycaemia during fasting due to failure to oxidise long-chain fatty acids."
+  ],
+  "sourceNotes": [
+    "Lehninger Principles of Biochemistry, 8th ed. (chapters on lipid metabolism)",
+    "Berg, Tymoczko, Stryer — Biochemistry, 9th ed.",
+    "Harper's Illustrated Biochemistry",
+    "Marks' Basic Medical Biochemistry"
+  ]
+}
