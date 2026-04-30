@@ -1,0 +1,167 @@
+{
+  "id": "liver-gluconeogenesis",
+  "title": "Liver Gluconeogenesis",
+  "organ": "liver",
+  "tissue": "hepatic parenchyma",
+  "cellType": "hepatocyte",
+  "compartments": [
+    { "id": "cyt", "name": "Cytosol" },
+    { "id": "matrix", "name": "Mitochondrial matrix" },
+    { "id": "er", "name": "Endoplasmic reticulum" }
+  ],
+  "metabolites": [
+    { "id": "pyruvate_m", "name": "Pyruvate (matrix)", "formula": "C3H4O3", "compartment": "matrix" },
+    { "id": "lactate", "name": "Lactate", "formula": "C3H6O3", "compartment": "cyt" },
+    { "id": "alanine", "name": "Alanine", "formula": "C3H7NO2", "compartment": "cyt" },
+    { "id": "oaa_m", "name": "Oxaloacetate (matrix)", "compartment": "matrix" },
+    { "id": "malate_m", "name": "Malate (matrix)", "compartment": "matrix" },
+    { "id": "malate_c", "name": "Malate (cytosol)", "compartment": "cyt" },
+    { "id": "oaa_c", "name": "Oxaloacetate (cytosol)", "compartment": "cyt" },
+    { "id": "pep", "name": "Phosphoenolpyruvate", "compartment": "cyt" },
+    { "id": "f16bp", "name": "Fructose-1,6-bisphosphate", "compartment": "cyt" },
+    { "id": "f6p", "name": "Fructose-6-phosphate", "compartment": "cyt" },
+    { "id": "g6p", "name": "Glucose-6-phosphate", "compartment": "cyt" },
+    { "id": "glucose", "name": "Glucose", "formula": "C6H12O6", "compartment": "er" },
+    { "id": "acetyl_coa_m", "name": "Acetyl-CoA (matrix)", "compartment": "matrix" },
+    { "id": "f26bp", "name": "Fructose-2,6-bisphosphate", "compartment": "cyt" },
+    { "id": "camp", "name": "cAMP", "compartment": "cyt" }
+  ],
+  "enzymes": [
+    {
+      "id": "pc",
+      "name": "Pyruvate carboxylase",
+      "shortName": "PC",
+      "ec": "6.4.1.1",
+      "compartment": "matrix"
+    },
+    {
+      "id": "pepck",
+      "name": "Phosphoenolpyruvate carboxykinase (cytosolic)",
+      "shortName": "PEPCK",
+      "ec": "4.1.1.32",
+      "compartment": "cyt"
+    },
+    {
+      "id": "fbpase1",
+      "name": "Fructose-1,6-bisphosphatase",
+      "shortName": "FBPase-1",
+      "ec": "3.1.3.11",
+      "compartment": "cyt"
+    },
+    {
+      "id": "g6pase",
+      "name": "Glucose-6-phosphatase",
+      "shortName": "G6Pase",
+      "ec": "3.1.3.9",
+      "compartment": "er"
+    }
+  ],
+  "reactions": [
+    {
+      "id": "rx_pc",
+      "name": "Pyruvate carboxylation",
+      "enzyme": "pc",
+      "substrates": ["pyruvate_m"],
+      "products": ["oaa_m"],
+      "compartment": "matrix",
+      "notes": "Pyruvate + CO2 + ATP + H2O → OAA + ADP + Pi. Requires biotin as prosthetic group. Obligatory allosteric activator: acetyl-CoA (accumulates during active beta-oxidation). OAA cannot cross the inner mitochondrial membrane; it is reduced to malate by mitochondrial MDH and exported via the malate-aspartate shuttle, then re-oxidised to OAA in the cytosol."
+    },
+    {
+      "id": "rx_pepck",
+      "name": "OAA decarboxylation and phosphorylation",
+      "enzyme": "pepck",
+      "substrates": ["oaa_c"],
+      "products": ["pep"],
+      "compartment": "cyt",
+      "notes": "OAA + GTP → PEP + CO2 + GDP. The cytosolic isoform (PCK1) is the predominant hepatic isoform in humans. PEPCK protein has a short half-life (~30 min), so transcriptional regulation has rapid physiological impact. Glucagon/cAMP induces PCK1 transcription via CREB; insulin represses it via Akt-mediated FOXO1 phosphorylation and nuclear exclusion."
+    },
+    {
+      "id": "rx_fbpase",
+      "name": "Fructose-1,6-bisphosphate hydrolysis",
+      "enzyme": "fbpase1",
+      "substrates": ["f16bp"],
+      "products": ["f6p"],
+      "compartment": "cyt",
+      "notes": "Fructose-1,6-bisphosphate + H2O → fructose-6-phosphate + Pi. Irreversible hydrolysis that bypasses the thermodynamically irreversible PFK-1 step of glycolysis. Allosterically inhibited by AMP (at the AMP site, distinct from the catalytic site) and by fructose-2,6-bisphosphate. Glucagon state: F2,6BP is low because PKA activates the bisphosphatase domain of the bifunctional PFK-2/FBPase-2 enzyme, relieving FBPase-1 inhibition."
+    },
+    {
+      "id": "rx_g6pase",
+      "name": "Glucose-6-phosphate hydrolysis",
+      "enzyme": "g6pase",
+      "substrates": ["g6p"],
+      "products": ["glucose"],
+      "compartment": "er",
+      "notes": "Glucose-6-phosphate + H2O → glucose + Pi. G6Pase is a multi-subunit ER-membrane enzyme; its catalytic subunit faces the ER lumen. Glucose-6-phosphate is transported into the ER by a specific translocase (mutated in GSD Ib). Absent in muscle and brain, so those tissues cannot export glucose. Gene transcription is induced by glucagon (CREB/HNF-1) and repressed by insulin (FOXO1 exclusion)."
+    }
+  ],
+  "regulationRules": [
+    {
+      "id": "r1",
+      "trigger": "glucagon high",
+      "effect": "activate",
+      "target": "rx_pepck",
+      "mechanism": "Glucagon binds GPCR → adenylyl cyclase → cAMP → PKA → phospho-CREB binds CRE in PEPCK promoter (PCK1 gene). Induction is transcriptional with a lag of 30-60 min. FOXO1 is also active (unphosphorylated) and binds the IRS element in the PCK1 promoter, amplifying induction."
+    },
+    {
+      "id": "r2",
+      "trigger": "insulin high",
+      "effect": "inhibit",
+      "target": "rx_pepck",
+      "mechanism": "Insulin → PI3K → Akt → phosphorylates FOXO1 on Thr24/Ser256/Ser319 → nuclear exclusion → PCK1 and G6PC transcription falls. Also activates PP2A-mediated dephosphorylation of CREB, attenuating the glucagon signal."
+    },
+    {
+      "id": "r3",
+      "trigger": "glucagon high",
+      "effect": "activate",
+      "target": "rx_fbpase",
+      "mechanism": "PKA phosphorylates the PFK-2/FBPase-2 bifunctional enzyme, activating the FBPase-2 domain and inhibiting the PFK-2 domain. Fructose-2,6-bisphosphate concentration falls. This relieves allosteric inhibition of FBPase-1, allowing the gluconeogenic flux from F1,6BP to F6P."
+    },
+    {
+      "id": "r4",
+      "trigger": "amp high",
+      "effect": "inhibit",
+      "target": "rx_fbpase",
+      "mechanism": "AMP binds allosterically to FBPase-1 at a site remote from the active site, inducing a conformational change that reduces catalytic activity. This links gluconeogenic flux to the cellular energy charge: when AMP is high (low energy), FBPase-1 is partially braked."
+    },
+    {
+      "id": "r5",
+      "trigger": "acetyl-CoA high (from beta-oxidation)",
+      "effect": "activate",
+      "target": "rx_pc",
+      "mechanism": "Acetyl-CoA is an obligatory allosteric activator of pyruvate carboxylase; without it, the enzyme is nearly inactive. This couples fatty acid oxidation to gluconeogenesis: when lipolysis and beta-oxidation provide acetyl-CoA, PC is switched on to generate OAA for gluconeogenesis."
+    },
+    {
+      "id": "r6",
+      "trigger": "insulin high",
+      "effect": "inhibit",
+      "target": "rx_g6pase",
+      "mechanism": "Insulin → Akt → FOXO1 nuclear exclusion. The G6PC gene has FOXO1-binding IRS elements; repression lowers G6Pase protein and reduces the hepatic glucose-output capacity."
+    }
+  ],
+  "teachingSequence": [
+    "After an overnight fast, portal glucose falls and alpha-cell glucagon rises, signalling the liver to maintain blood glucose.",
+    "Gluconeogenic substrates arrive: lactate (from red blood cells and working muscle), alanine (from muscle proteolysis), and glycerol (from adipose lipolysis).",
+    "In the mitochondrial matrix, pyruvate carboxylase (activated by rising acetyl-CoA from early beta-oxidation) converts pyruvate to OAA.",
+    "OAA cannot cross the inner membrane; it is reduced to malate by MDH, exits via the malate-aspartate shuttle, and is re-oxidised to OAA in the cytosol by cytosolic MDH.",
+    "Cytosolic PEPCK (induced by glucagon/cAMP) decarboxylates and phosphorylates OAA to PEP, consuming GTP.",
+    "The gluconeogenic sequence runs from PEP through fructose-1,6-bisphosphate via reversal of the glycolytic steps (aldolase, triose phosphate isomerase, phosphoglycerate kinase, enolase, etc. run in reverse under thermodynamically favourable conditions).",
+    "FBPase-1 bypasses the irreversible PFK-1 step by hydrolyzing fructose-1,6-bisphosphate to fructose-6-phosphate; glucagon lowers F2,6BP, removing allosteric inhibition.",
+    "Glucose-6-phosphatase (ER membrane) cleaves G6P to free glucose, which exits via GLUT2 into the hepatic vein, restoring blood glucose."
+  ],
+  "clinicalLinks": [
+    "Type 2 diabetes: hepatic insulin resistance maintains FOXO1 nuclear activity even after feeding, so PEPCK and G6Pase remain expressed and fasting hyperglycaemia persists. This is the principal driver of elevated fasting blood glucose in T2DM.",
+    "Metformin: inhibits mitochondrial complex I, raising the AMP:ATP ratio. Higher AMP allosterically inhibits FBPase-1 and may reduce PC activity indirectly, lowering gluconeogenic output. This is the primary glucose-lowering mechanism of metformin.",
+    "Von Gierke disease (GSD type Ia): G6Pase catalytic subunit deficiency (G6PC mutations). Neither gluconeogenesis nor glycogenolysis can release glucose; severe fasting hypoglycaemia results. Hepatomegaly from accumulated glycogen and fat. Treated with frequent cornstarch feeds.",
+    "GSD type Ib: mutations in the G6P translocase (SLC37A4). G6Pase protein is present but cannot access its substrate. Same metabolic phenotype as GSD Ia, plus neutropenia.",
+    "Biotin deficiency: impairs pyruvate carboxylase (biotin-dependent), blocking the first committed step of gluconeogenesis from pyruvate. Causes lactic acidaemia and fasting hypoglycaemia.",
+    "PEPCK deficiency: very rare, causes severe hypoglycaemia, hepatomegaly, and lactic acidosis; distinguishes the essential role of PEPCK in connecting TCA intermediates to gluconeogenesis."
+  ],
+  "sourceNotes": [
+    "Lehninger Principles of Biochemistry, 8th ed., Chapter 14 (catabolism of amino acids and gluconeogenesis) and Chapter 15 (regulation of carbohydrate metabolism)",
+    "Berg, Tymoczko, Stryer, Biochemistry, 9th ed., Chapter 16 (glycolysis and gluconeogenesis)",
+    "Harper's Illustrated Biochemistry, 31st ed., Chapter 19 (gluconeogenesis and control of the blood glucose)",
+    "Marks' Basic Medical Biochemistry, 5th ed., Chapter 31 (gluconeogenesis and maintenance of blood glucose levels)",
+    "Pilkis SJ, Granner DK (1992). Molecular physiology of the regulation of hepatic gluconeogenesis and glycolysis. Annu Rev Physiol 54:885-909.",
+    "Magnusson I et al. (1992). Increased rate of gluconeogenesis in type II diabetes mellitus. J Clin Invest 90:1323-1327."
+  ]
+}

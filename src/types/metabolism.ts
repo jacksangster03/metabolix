@@ -24,6 +24,7 @@ export type ActivityStatus =
   | "active";
 
 export interface PathwayStatus {
+  // Fatty acid synthesis (v0.1)
   glycolysis: ActivityStatus;
   pdh: ActivityStatus;
   tca: ActivityStatus;
@@ -32,7 +33,26 @@ export interface PathwayStatus {
   fattyAcidSynthesis: ActivityStatus;
   cpt1: ActivityStatus;
   betaOxidation: ActivityStatus;
+  // Gluconeogenesis (v0.2)
+  gluconeogenesis: ActivityStatus;
+  pyruvateCarboxylase: ActivityStatus;
+  pepck: ActivityStatus;
+  fructose16Bisphosphatase: ActivityStatus;
+  glucose6Phosphatase: ActivityStatus;
+  // Glycogenolysis (v0.2)
+  glycogenolysis: ActivityStatus;
+  glycogenPhosphorylase: ActivityStatus;
+  // Ketogenesis (v0.2)
+  ketogenesis: ActivityStatus;
+  hmgCoaSynthase: ActivityStatus;
 }
+
+export type PathwayId =
+  | "fatty-acid-synthesis"
+  | "gluconeogenesis"
+  | "glycogenolysis"
+  | "beta-oxidation"
+  | "ketogenesis";
 
 export interface Compartment {
   id: string;

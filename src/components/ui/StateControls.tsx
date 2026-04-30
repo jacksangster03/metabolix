@@ -1,11 +1,15 @@
 import { useAppStore } from "../../store/appStore";
 import type { Level, MetabolicState, OxygenLevel } from "../../types/metabolism";
 
-const presetButtons: { id: "fed" | "fasted" | "exercise" | "hypoxia"; label: string }[] = [
+const presetButtons: {
+  id: "fed" | "fasted" | "exercise" | "hypoxia" | "starvation";
+  label: string;
+}[] = [
   { id: "fed", label: "Fed" },
   { id: "fasted", label: "Fasted" },
   { id: "exercise", label: "Exercise" },
   { id: "hypoxia", label: "Hypoxia" },
+  { id: "starvation", label: "Starvation" },
 ];
 
 const levelKeys: { key: keyof MetabolicState; label: string; opts: (Level | OxygenLevel)[] }[] = [
