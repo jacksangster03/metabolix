@@ -1,0 +1,155 @@
+{
+  "id": "liver-ketogenesis",
+  "title": "Liver Ketogenesis",
+  "organ": "liver",
+  "tissue": "hepatic parenchyma",
+  "cellType": "hepatocyte",
+  "compartments": [
+    { "id": "matrix", "name": "Mitochondrial matrix" },
+    { "id": "blood", "name": "Circulation" }
+  ],
+  "metabolites": [
+    { "id": "acetyl_coa", "name": "Acetyl-CoA", "compartment": "matrix" },
+    { "id": "acetoacetyl_coa", "name": "Acetoacetyl-CoA", "compartment": "matrix" },
+    { "id": "hmg_coa", "name": "HMG-CoA (mitochondrial)", "compartment": "matrix" },
+    { "id": "acetoacetate", "name": "Acetoacetate", "formula": "C4H6O3", "compartment": "matrix" },
+    { "id": "beta_ohb", "name": "Beta-hydroxybutyrate", "formula": "C4H8O3", "compartment": "matrix" },
+    { "id": "acetone", "name": "Acetone", "formula": "C3H6O", "compartment": "blood" },
+    { "id": "oaa", "name": "Oxaloacetate", "compartment": "matrix" },
+    { "id": "succinyl_coa", "name": "Succinyl-CoA", "compartment": "matrix" },
+    { "id": "nadh", "name": "NADH", "compartment": "matrix" },
+    { "id": "nad", "name": "NAD+", "compartment": "matrix" },
+    { "id": "coa", "name": "Coenzyme A (free)", "compartment": "matrix" }
+  ],
+  "enzymes": [
+    {
+      "id": "thiolase_m",
+      "name": "Acetyl-CoA acetyltransferase (mitochondrial thiolase)",
+      "shortName": "T2 Thiolase",
+      "ec": "2.3.1.9",
+      "compartment": "matrix"
+    },
+    {
+      "id": "hmgcs2",
+      "name": "HMG-CoA synthase (mitochondrial)",
+      "shortName": "HMGCS2",
+      "ec": "2.3.3.10",
+      "compartment": "matrix"
+    },
+    {
+      "id": "hmgcl",
+      "name": "HMG-CoA lyase",
+      "shortName": "HMGCL",
+      "ec": "4.1.3.4",
+      "compartment": "matrix"
+    },
+    {
+      "id": "bhbd",
+      "name": "Beta-hydroxybutyrate dehydrogenase",
+      "shortName": "BHBD",
+      "ec": "1.1.1.30",
+      "compartment": "matrix"
+    }
+  ],
+  "reactions": [
+    {
+      "id": "rx_thiolase",
+      "name": "Thiolase condensation",
+      "enzyme": "thiolase_m",
+      "substrates": ["acetyl_coa"],
+      "products": ["acetoacetyl_coa"],
+      "compartment": "matrix",
+      "notes": "2 Acetyl-CoA → acetoacetyl-CoA + CoA. Reversible reaction; in beta-oxidation the same enzyme runs in the thiolytic cleavage direction. In ketogenesis, the condensation direction is driven forward by the high acetyl-CoA concentration that accumulates when TCA flux is limited by low OAA."
+    },
+    {
+      "id": "rx_hmgcs2",
+      "name": "HMG-CoA synthesis",
+      "enzyme": "hmgcs2",
+      "substrates": ["acetoacetyl_coa", "acetyl_coa"],
+      "products": ["hmg_coa"],
+      "compartment": "matrix",
+      "notes": "Acetoacetyl-CoA + acetyl-CoA + H2O → HMG-CoA + CoA. This is the rate-limiting and regulated step of ketogenesis. The mitochondrial isoform (HMGCS2) is distinct from the cytosolic isoform (HMGCS1) involved in cholesterol synthesis. HMGCS2 is inhibited by succinyl-CoA (competitive with acetoacetyl-CoA), linking TCA activity to ketogenic flux: when the TCA runs (succinyl-CoA present), ketogenesis is braked. HMGCS2 gene expression is induced by fasting via PPAR-alpha and FGF21 signalling and repressed by insulin."
+    },
+    {
+      "id": "rx_hmgcl",
+      "name": "HMG-CoA cleavage",
+      "enzyme": "hmgcl",
+      "substrates": ["hmg_coa"],
+      "products": ["acetoacetate", "acetyl_coa"],
+      "compartment": "matrix",
+      "notes": "HMG-CoA → acetoacetate + acetyl-CoA. Irreversible. Acetoacetate is the primary ketone body exported from the mitochondrion. Note that one acetyl-CoA is regenerated, which can enter the TCA or condense with another acetyl-CoA in the next cycle."
+    },
+    {
+      "id": "rx_bhbd",
+      "name": "Acetoacetate reduction to beta-hydroxybutyrate",
+      "enzyme": "bhbd",
+      "substrates": ["acetoacetate", "nadh"],
+      "products": ["beta_ohb"],
+      "compartment": "matrix",
+      "notes": "Acetoacetate + NADH + H+ → beta-hydroxybutyrate + NAD+. Reversible reaction (direction depends on NADH/NAD+ ratio). During active beta-oxidation, NADH is high, favouring beta-hydroxybutyrate formation. The ratio of beta-OHB to acetoacetate in plasma reflects mitochondrial NADH/NAD+, used clinically as an indicator of redox state. Beta-OHB is the predominant circulating ketone (typically 2-3 x more than acetoacetate). A small fraction of acetoacetate undergoes spontaneous non-enzymatic decarboxylation to acetone + CO2 (the smell on the breath of ketotic patients)."
+    }
+  ],
+  "regulationRules": [
+    {
+      "id": "r1",
+      "trigger": "succinyl-CoA high (active TCA)",
+      "effect": "inhibit",
+      "target": "rx_hmgcs2",
+      "mechanism": "Succinyl-CoA competitively inhibits HMGCS2 at the acetoacetyl-CoA binding site. When the TCA cycle is running at full speed (e.g., fed state), succinyl-CoA is present and ketogenesis is braked. When OAA is depleted by gluconeogenesis (deep fasting), TCA flux falls, succinyl-CoA drops, and HMGCS2 is relieved."
+    },
+    {
+      "id": "r2",
+      "trigger": "fasting / ppar-alpha activation",
+      "effect": "activate",
+      "target": "rx_hmgcs2",
+      "mechanism": "Prolonged fasting raises plasma NEFA, which activate PPAR-alpha in hepatocytes. PPAR-alpha induces HMGCS2 gene transcription (and also the enzymes of beta-oxidation and fatty acid uptake). This transcriptional upregulation increases ketogenic capacity over hours to days of fasting. FGF21 (a fasting-induced hepatokine) potentiates PPAR-alpha signalling."
+    },
+    {
+      "id": "r3",
+      "trigger": "insulin high",
+      "effect": "inhibit",
+      "target": "rx_hmgcs2",
+      "mechanism": "Insulin represses HMGCS2 gene expression via Akt-mediated phosphorylation and nuclear exclusion of FOXA2, a transcription factor required for HMGCS2 induction. Insulin also suppresses adipose lipolysis, reducing NEFA supply to the liver and thus limiting the acetyl-CoA input to ketogenesis."
+    },
+    {
+      "id": "r4",
+      "trigger": "oaa depleted (gluconeogenesis active)",
+      "effect": "activate",
+      "target": "rx_hmgcs2",
+      "mechanism": "OAA is a substrate for both citrate synthase (TCA) and PEPCK (gluconeogenesis). In deep fasting, gluconeogenesis draws heavily on OAA (via PEPCK), and the TCA slows because it cannot receive acetyl-CoA without OAA. Acetyl-CoA accumulates, driving the thiolase condensation forward and increasing HMG-CoA synthesis. This is the key metabolic logic: gluconeogenesis and ketogenesis rise together in prolonged fasting because they share the OAA depletion signal."
+    },
+    {
+      "id": "r5",
+      "trigger": "nadh/nad+ ratio high",
+      "effect": "activate",
+      "target": "rx_bhbd",
+      "mechanism": "Beta-oxidation generates NADH in the mitochondrial matrix. The high NADH/NAD+ ratio (also seen in alcoholism) drives BHBD in the direction of beta-hydroxybutyrate formation, so plasma beta-OHB rises disproportionately relative to acetoacetate. The beta-OHB/acetoacetate ratio is used clinically as a proxy for the mitochondrial NADH/NAD+ ratio."
+    }
+  ],
+  "teachingSequence": [
+    "During prolonged fasting, glucagon-stimulated lipolysis delivers large amounts of NEFA to the liver. Beta-oxidation runs at high rate, generating acetyl-CoA faster than the TCA cycle can consume it.",
+    "The TCA cycle is limited because OAA is drawn away by active gluconeogenesis (PEPCK). Without OAA, acetyl-CoA cannot condense into citrate at citrate synthase.",
+    "Excess acetyl-CoA is diverted to the ketogenic pathway. Mitochondrial thiolase condenses two acetyl-CoA to acetoacetyl-CoA, and the rate-limiting enzyme HMGCS2 adds another acetyl-CoA to form HMG-CoA.",
+    "HMGCS2 is the gatekeeper: it is inhibited by succinyl-CoA (fed state, TCA running) and induced transcriptionally by PPAR-alpha during prolonged fasting. Succinyl-CoA falls when the TCA slows, relieving HMGCS2 inhibition.",
+    "HMG-CoA lyase cleaves HMG-CoA to acetoacetate + acetyl-CoA. The regenerated acetyl-CoA can re-enter the cycle, amplifying ketone output.",
+    "Beta-hydroxybutyrate dehydrogenase reduces acetoacetate to beta-hydroxybutyrate, driven by the high NADH generated by beta-oxidation. Beta-OHB (the predominant circulating ketone body) is exported to the bloodstream.",
+    "In peripheral tissues (heart, skeletal muscle, renal cortex, and after adaptation, the brain), beta-OHB and acetoacetate are converted back to acetyl-CoA via succinyl-CoA: 3-ketoacid CoA transferase (OXCT1) and thiolase, providing a highly efficient fuel that the liver itself cannot oxidise (it lacks OXCT1)."
+  ],
+  "clinicalLinks": [
+    "Diabetic ketoacidosis (DKA): in type 1 diabetes, absolute insulin deficiency removes all three brakes on ketogenesis (lipolysis uninhibited, HMGCS2 unrepressed, beta-oxidation unrestricted). Plasma ketone bodies rise to 10-25 mM (normal: <0.5 mM), causing severe metabolic acidosis (pH <7.3). Ketones are acids; their buffering consumes bicarbonate. Emergency treatment: insulin + IV fluids + potassium.",
+    "Starvation ketosis: after 3-5 days of total fasting, plasma ketones reach 5-7 mM. The brain adapts to use beta-OHB as its primary fuel, sparing glucose and thereby reducing muscle proteolysis. This is a physiological, compensated acidosis, distinct from DKA in its slower onset and lower magnitude.",
+    "Therapeutic ketosis: very-low-carbohydrate (ketogenic) diets raise plasma ketones to 1-3 mM. Used as adjunct therapy in drug-resistant epilepsy (since the 1920s) and investigated in metabolic syndrome and certain cancers.",
+    "Alcoholic ketoacidosis: excess ethanol oxidation generates massive NADH, inhibiting gluconeogenesis and driving the BHBD reaction toward beta-OHB. Presents with elevated anion-gap acidosis, low or normal glucose, and a high beta-OHB/acetoacetate ratio.",
+    "HMGCL deficiency: rare autosomal recessive disorder. Cannot complete ketogenesis. Presents in neonates or infancy with hypoketotic hypoglycaemia, hyperammonaemia, and metabolic acidosis triggered by fasting. Organic acid analysis shows elevated 3-methylglutaconyl-CoA intermediates.",
+    "MCAD deficiency (indirect link): impaired beta-oxidation reduces acetyl-CoA supply to ketogenesis. During illness, these patients are at risk of hypoketotic hypoglycaemia because they cannot mount a ketogenic response to fasting."
+  ],
+  "sourceNotes": [
+    "Lehninger Principles of Biochemistry, 8th ed., Chapter 17 (fatty acid catabolism, including ketone body synthesis)",
+    "Berg, Tymoczko, Stryer, Biochemistry, 9th ed., Chapter 22 (fatty acid metabolism and ketone bodies)",
+    "Harper's Illustrated Biochemistry, 31st ed., Chapter 22 (oxidation of fatty acids and the production of ketone bodies)",
+    "Marks' Basic Medical Biochemistry, 5th ed., Chapter 23 (ketone body synthesis and utilisation)",
+    "McGarry JD, Foster DW (1980). Regulation of hepatic fatty acid oxidation and ketone body production. Annu Rev Biochem 49:395-420.",
+    "Cotter DG, Schugar RC, Crawford PA (2013). Ketone body metabolism and cardiovascular disease. Am J Physiol Heart Circ Physiol 304:H1060-H1076.",
+    "Browning JD, Horton JD (2004). Molecular mediators of hepatic steatosis and liver injury. J Clin Invest 114:147-152 (for PPAR-alpha / HMGCS2 regulation)."
+  ]
+}

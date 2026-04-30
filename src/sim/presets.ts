@@ -46,4 +46,16 @@ export const presets: Record<string, MetabolicState> = {
     citrate: "normal",
     oxygen: "normal",
   },
+  // Prolonged starvation (>24 h): glycogen is exhausted, ATP is low, AMP is high.
+  // Gluconeogenesis and ketogenesis are both maximally active.
+  // Distinguishes from simple 'fasted' (atp normal) by ATP depletion.
+  starvation: {
+    feedingState: "fasted",
+    insulin: "low",
+    glucagon: "high",
+    atp: "low",
+    amp: "high",
+    citrate: "low",
+    oxygen: "normal",
+  },
 };
