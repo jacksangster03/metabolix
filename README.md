@@ -30,6 +30,7 @@ Open the URL printed by Vite (default `http://localhost:5173`).
 ```bash
 npm run build   # type-check and bundle
 npm run preview # serve the production build
+npm run lint    # ESLint
 ```
 
 ## Project layout
@@ -78,7 +79,7 @@ metabolix/
 Metabolix separates three layers cleanly:
 
 1. **3D scene** (`src/scene`): pure rendering. No biology lives here.
-2. **Simulation** (`src/sim`): pure functions that map a `MetabolicState` to a `PathwayStatus` and a list of `ExplanationStep`s. Easily unit-testable.
+2. **Simulation** (`src/sim`): pure functions that map a `MetabolicState` to a `PathwayStatus` and a list of `ExplanationStep`s. Designed to be unit-testable (no tests yet).
 3. **Content** (`src/content`): pathway facts as JSON, including metabolites, enzymes, reactions, regulation rules, teaching sequence, clinical links, and source notes.
 
 The Zustand store in `src/store/appStore.ts` glues scene mode and metabolic state to the UI. Adding a pathway means adding a JSON file and extending `rulesEngine.ts`, not editing components.
@@ -112,7 +113,7 @@ All scientific facts in `src/content` are manually curated against these referen
 
 ## Status
 
-Early prototype. Built as a vertical slice to prove the spatial-zoom + rules-engine + structured-content product concept end to end. See `CLAUDE.md` for design intent.
+Early prototype; the pathway model is a teaching simplification, not a quantitative simulation. The production build succeeds, but there are no automated tests yet (the simulation layer is written as pure functions so tests can be added without touching the 3D scene). Built as a vertical slice to prove the spatial-zoom + rules-engine + structured-content product concept end to end. See `CLAUDE.md` for design intent.
 
 ## License
 
